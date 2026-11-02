@@ -1,12 +1,4 @@
-# Manual corto de este archivo
-# Python lo lee de arriba hacia abajo
-# Cuando aparece un def o una class, no se ejecuta en ese momento: solo se guarda
-# El juego arranca de verdad al final, donde dice if __name__
-# Lo que queda mas a la derecha pertenece a lo de arriba
-# (un if, un for, una función) En Python eso se llama indentación
-# y reemplaza a las llaves Si se corre mal, el programa se confunde
 
-# Aca se esplica que herramientas se traen de afuera
 # math: raices y potencias
 # random: elegir algo al azar
 # sys: cerrar el programa
@@ -32,7 +24,6 @@ SCREEN_HEIGHT = MAP_HEIGHT * TILE_SIZE + 70
 # El juego intenta dibujar 60 veces por segundo
 FPS = 60
 
-# Un color es una tupla: tres numeros entre parentesis
 # Son rojo, verde y azul, de 0 a 255
 # (255, 230, 0) es el amarillo de Pac-Man
 COLOR_FONDO = (5, 5, 25)
@@ -44,9 +35,7 @@ COLOR_TEXTO = (255, 255, 255)
 COLOR_ROJO = (255, 60, 60)
 
 
-# def guarda una funcion con nombre No corre hasta que alguien la llama
-# a y b son los datos que se le pasan return es el resultado que devuelve
-# a[0] es el primer numero de a (la x) a[1] es el segundo (la y)
+
 # En Python se empieza a contar desde 0
 # ** 2 significa al cuadrado
 # Esta funcion mide que tan lejos estan dos puntos

@@ -3,8 +3,8 @@
 # Cuando aparece un def o una class, no se ejecuta en ese momento: solo se guarda
 # El juego arranca de verdad al final, donde dice if __name__
 # Lo que queda mas a la derecha pertenece a lo de arriba
-# (un if, un for, una función). En Python eso se llama indentación
-# y reemplaza a las llaves. Si se corre mal, el programa se confunde
+# (un if, un for, una función) En Python eso se llama indentación
+# y reemplaza a las llaves Si se corre mal, el programa se confunde
 
 # Aca se esplica que herramientas se traen de afuera
 # math: raices y potencias
@@ -44,9 +44,9 @@ COLOR_TEXTO = (255, 255, 255)
 COLOR_ROJO = (255, 60, 60)
 
 
-# def guarda una funcion con nombre. No corre hasta que alguien la llama
-# a y b son los datos que se le pasan. return es el resultado que devuelve
-# a[0] es el primer numero de a (la x). a[1] es el segundo (la y)
+# def guarda una funcion con nombre No corre hasta que alguien la llama
+# a y b son los datos que se le pasan return es el resultado que devuelve
+# a[0] es el primer numero de a (la x) a[1] es el segundo (la y)
 # En Python se empieza a contar desde 0
 # ** 2 significa al cuadrado
 # Esta funcion mide que tan lejos estan dos puntos
@@ -67,7 +67,7 @@ def centro_de_celda(columna, fila):
 # Pasa de pixeles al numero de casilla
 # Error de antes: en el historial se usaba round(x / 28)
 # El centro de una casilla cae en 14, 42, 70... y round(42 / 28) = round(1.5) = 2,
-# o sea la casilla de al lado. El verde seguia un rastro corrido
+# o sea la casilla de al lado El verde seguia un rastro corrido
 # Cambio: se resta el medio de la casilla y despues se redondea
 def celda_desde_pixel(x, y):
     return (
@@ -79,6 +79,9 @@ def celda_desde_pixel(x, y):
 # Error de antes: si el destino caia dentro de un muro o afuera del mapa,
 # el fantasma igual caminaba hacia ese punto y se perdia contra la pared
 # Cambio: se busca la casilla libre mas cercana y el camino llega ahi
+# min elige la casilla con el numero mas chico
+# key=lambda le dice que numero usar para comparar
+# abs saca el signo: de 3 a 1 hay 2, igual que de 1 a 3
 def celda_libre_mas_cercana(celda, celdas_libres):
     if celda in celdas_libres:
         return celda
@@ -92,11 +95,13 @@ def celda_libre_mas_cercana(celda, celdas_libres):
 # No miraba si mas adelante el pasillo estaba cerrado, entraba a un callejon,
 # daba la vuelta, y parecia que iban al azar
 # Cambio: se arma cuantos pasos faltan hasta el destino, solo por casillas libres
-# deque es una fila. El primero que entra es el primero que sale
+# deque es una fila El primero que entra es el primero que sale
 # Entonses el recorrido sale en orden, casilla por casilla
 def distancias_hasta(destino, celdas_libres):
     distancias = {destino: 0}
     pendientes = deque([destino])
+    # while repite mientras la condicion sea verdadera
+    # Aca, mientras queden casillas en la fila
     while pendientes:
         columna, fila = pendientes.popleft()
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
@@ -107,7 +112,7 @@ def distancias_hasta(destino, celdas_libres):
     return distancias
 
 
-# class es un molde. Punto describe como es un puntito
+# class es un molde Punto describe como es un puntito
 # Todavia no existe ningun punto: se crean mas adelante
 # self significa "este punto", el que se esta usando en ese momento
 class Punto:
@@ -121,8 +126,8 @@ class Punto:
         self.radio = 4
         self.activo = True
 
-    # if pregunta. Si la condicion es verdadera, corre lo que esta indentado debajo
-    # Aca: si el punto sigue activo, se dibuja. Si ya fue comido, no se hace nada
+    # if pregunta Si la condicion es verdadera, corre lo que esta indentado debajo
+    # Aca: si el punto sigue activo, se dibuja Si ya fue comido, no se hace nada
     # y desaparece de la pantalla
     def dibujar(self, pantalla):
         if self.activo:
@@ -140,7 +145,7 @@ class Jugador:
     # direccion es hacia donde va ahora
     # direccion_solicitada es la flecha que se apreto, aunque todavia no pueda doblar
     # rect es un rectangulo invisible del tamaño del cuerpo
-    # Sirve para chocar con muros y fantasmas. En pantalla se ve un circulo
+    # Sirve para chocar con muros y fantasmas En pantalla se ve un circulo
     def __init__(self, columna, fila):
         self.x, self.y = centro_de_celda(columna, fila)
         self.radio = TILE_SIZE // 2 - 3
@@ -161,7 +166,7 @@ class Jugador:
     def actualizar_rectangulo(self):
         self.rect.center = (round(self.x), round(self.y))
 
-    # Esto no mueve a Pac-Man. Solo anota la direccion que pidio el teclado
+    # Esto no mueve a Pac-Man Solo anota la direccion que pidio el teclado
     # El movimiento de verdad pasa en actualizar, si el camino esta libre
     def establecer_direccion(self, direccion):
         self.direccion_solicitada = direccion
@@ -179,7 +184,7 @@ class Jugador:
     # Corre una vez por fotograma
     # Primero: si la flecha pedida no choca, esa pasa a ser la direccion real
     # Asi se puede apretar la flecha un poco antes de la esquina y dobla cuando puede
-    # Despues avanza. Si ahi si choca, se detiene y la direccion queda en (0, 0)
+    # Despues avanza Si ahi si choca, se detiene y la direccion queda en (0, 0)
     # += suma y guarda el resultado en la misma variable
     def actualizar(self, muros):
         dx_solicitada, dy_solicitada = self.direccion_solicitada
@@ -208,7 +213,7 @@ class Jugador:
     # Dibuja el circulo amarillo
     # Si esta quieto, return sale de la funcion y no dibuja la boca
     # Si se mueve, arma un triangulo del lado hacia donde mira
-    # y lo pinta del color del fondo. Ese triangulo es el hueco de la boca
+    # y lo pinta del color del fondo Ese triangulo es el hueco de la boca
     # elif es "si lo de arriba no paso, fijarse esta otra cosa"
     # else es "si ninguna de las anteriores paso"
     def dibujar(self, pantalla):
@@ -251,11 +256,11 @@ class Jugador:
         pygame.draw.polygon(pantalla, COLOR_FONDO, puntos_boca)
 
 
-# Molde de un fantasma. Cada uno tiene un numero del 1 al 6
+# Molde de un fantasma Cada uno tiene un numero del 1 al 6
 # y ese numero cambia a donde quiere llegar
 # El camino lo buscan todos igual: por las casillas libres, de centro a centro
 class Fantasma:
-    # Estas listas son de la clase. Las comparten todos los fantasmas
+    # Estas listas son de la clase Las comparten todos los fantasmas
     # [] es una lista: se puede recorrer y tiene un orden
     COLORES = [
         (255, 50, 50),
@@ -267,13 +272,13 @@ class Fantasma:
     ]
     DIRECCIONES = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
-    # % es el resto de una division. Sirve para no salirse de la lista de colores
+    # % es el resto de una division Sirve para no salirse de la lista de colores
     # Error de antes: la velocidad era 1.8 y cada fantasma sumaba 0.08
     # 28 no es multiplo de 1.8, entonses nunca caian justo en el centro
     # y se iban chocando de costado
-    # Cambio: todos van a 2 pixeles. 28 / 2 = 14, asi que de un centro
+    # Cambio: todos van a 2 pixeles 28 / 2 = 14, asi que de un centro
     # al siguiente caen exacto
-    # La direccion arranca en (0, 0). Antes arrancaba al azar y,
+    # La direccion arranca en (0, 0) Antes arrancaba al azar y,
     # como podian dar media vuelta enseguida, salian temblando
     def __init__(self, columna, fila, numero):
         self.x, self.y = centro_de_celda(columna, fila)
@@ -291,18 +296,20 @@ class Fantasma:
         self.rect = pygame.Rect(0, 0, self.radio * 2, self.radio * 2)
         self.actualizar_rectangulo()
 
+    # Mueve el rectangulo invisible al centro del fantasma
     def actualizar_rectangulo(self):
         self.rect.center = (round(self.x), round(self.y))
 
+    # Devuelve la columna y la fila donde esta parado
     def celda_actual(self):
         return celda_desde_pixel(self.x, self.y)
 
     # Error de antes: "cerca del centro" usaba round(x / 28) * 28
     # Eso cae en 0, 28, 56: el borde entre dos casillas, no el medio (14, 42, 70)
-    # Giraban encima de la linea. El cuerpo de 22 pixeles pisaba el muro
+    # Giraban encima de la linea El cuerpo de 22 pixeles pisaba el muro
     # del hueco chico, y el rojo se quedaba rebotando arriba y abajo
     # Cambio: solo es True cuando x e y estan justo en el medio
-    # % es el resto. Si da 0, cayo en el centro
+    # % es el resto Si da 0, cayo en el centro
     def en_el_centro(self):
         return (
             (self.x - TILE_SIZE // 2) % TILE_SIZE == 0
@@ -318,9 +325,12 @@ class Fantasma:
 
     # Error de antes: las 4 flechas servian, incluida la de atras
     # En un pasillo el rojo elegia arriba, al toque abajo, y no avanzaba
-    # Cambio: se saca la media vuelta. Solo se deja si es la unica salida
+    # Cambio: se saca la media vuelta Solo se deja si es la unica salida
     # Si todavia no camino, direccion es (0, 0) y la opuesta tambien,
     # asi que la primera eleccion puede ser cualquiera de las cuatro
+    # El menos cambia el signo: (1, 0) pasa a ser (-1, 0)
+    # La lista de abajo es un for y un if en una sola linea
+    # Se queda con cada flecha que no sea la de atras y que entre al pasillo
     def direcciones_sin_vuelta(self, columna, fila, celdas_libres):
         opuesta = (-self.direccion[0], -self.direccion[1])
         validas = [
@@ -336,7 +346,7 @@ class Fantasma:
         return []
 
     # Si Pac-Man se esta moviendo, se usa esa flecha
-    # Si esta quieto, se usa la ultima. Antes la flecha quieta era (0, 0)
+    # Si esta quieto, se usa la ultima Antes la flecha quieta era (0, 0)
     # y el rosa y el cian se quedaban sin adelanto
     def mira_del_jugador(self, jugador):
         if jugador.direccion != (0, 0):
@@ -349,13 +359,13 @@ class Fantasma:
     def celda_destino(self, jugador, fantasmas, historial_jugador):
         celda_jugador = celda_desde_pixel(jugador.x, jugador.y)
 
-        # Rojo. Error de antes: apuntaba al pixel de Pac-Man y daba un paso
+        # Rojo Error de antes: apuntaba al pixel de Pac-Man y daba un paso
         # hacia lo que se viera mas cerca, sin rodear muros
         # Cambio: la casilla de Pac-Man es el destino y va por el pasillo
         if self.numero == 1:
             return celda_jugador
 
-        # Rosa. Tiene que aparecer 4 casillas adelante de Pac-Man
+        # Rosa Tiene que aparecer 4 casillas adelante de Pac-Man
         # para cortarle el camino
         # Error de antes: si Pac-Man estaba quieto, dx y dy valian 0
         # y este punto era el mismo que el del rojo
@@ -364,10 +374,10 @@ class Fantasma:
             dx, dy = self.mira_del_jugador(jugador)
             return (celda_jugador[0] + dx * 4, celda_jugador[1] + dy * 4)
 
-        # Cian. Calcula 2 casillas adelante de Pac-Man y las espeja
+        # Cian Calcula 2 casillas adelante de Pac-Man y las espeja
         # contra el rojo, para salir por el otro lado y encerrarlo
         # Error de antes: ese punto se armaba en pixeles y muchas veces caia
-        # dentro de un muro. El cian caminaba derecho ahi y daba vueltas
+        # dentro de un muro El cian caminaba derecho ahi y daba vueltas
         # Si el punto no es pasillo, celda_libre_mas_cercana lo corrige
         if self.numero == 3:
             dx, dy = self.mira_del_jugador(jugador)
@@ -381,13 +391,13 @@ class Fantasma:
                 adelante[1] + (adelante[1] - rojo[1]),
             )
 
-        # Naranja, cuando esta lejos. Cuando esta cerca, huye en elegir_direccion,
-        # no aca. Error de antes: lejos tambien iba en linea recta
+        # Naranja, cuando esta lejos Cuando esta cerca, huye en elegir_direccion,
+        # no aca Error de antes: lejos tambien iba en linea recta
         # Cambio: persigue la casilla de Pac-Man por el pasillo, igual que el rojo
         if self.numero == 4:
             return celda_jugador
 
-        # Verde. Error de antes: iba al punto mas viejo del historial en linea recta,
+        # Verde Error de antes: iba al punto mas viejo del historial en linea recta,
         # y ese punto ademas estaba en la casilla equivocada
         # Cambio: el historial es una lista de casillas, de la mas vieja a la mas nueva,
         # y el verde camina a la que sigue en esa lista
@@ -398,7 +408,7 @@ class Fantasma:
 
     # Si el fantasma esta parado en el rastro, el destino es la casilla siguiente
     # Si no, primero va a la mas vieja para engancharse al camino de Pac-Man
-    # enumerate da el indice y la casilla. Se queda con la ultima vez
+    # enumerate da el indice y la casilla Se queda con la ultima vez
     # que esa casilla aparece, para seguir hacia adelante y no hacia atras
     def siguiente_del_rastro(self, historial):
         if not historial:
@@ -414,7 +424,7 @@ class Fantasma:
             return historial[indice + 1]
         return historial[indice]
 
-    # Da True si Pac-Man esta a menos de 8 casillas. Lo usa el naranja para huir
+    # Da True si Pac-Man esta a menos de 8 casillas Lo usa el naranja para huir
     def jugador_esta_cerca(self, jugador):
         return distancia((self.x, self.y), (jugador.x, jugador.y)) < TILE_SIZE * 8
 
@@ -425,10 +435,11 @@ class Fantasma:
         if not validas:
             return
 
-        # Violeta. Error de antes: sorteaba una flecha en cada casilla,
+        # Violeta Error de antes: sorteaba una flecha en cada casilla,
         # aunque el pasillo siguiera derecho, y se veia como ruido
-        # Cambio: si puede seguir derecho, sigue. Sortea solo cuando
+        # Cambio: si puede seguir derecho, sigue Sortea solo cuando
         # el pasillo se corta y tiene que doblar una esquina
+        # random.choice agarra una de la lista, al azar
         # La media vuelta solo entra en validas si no hay otra salida
         if self.numero == 6:
             if self.direccion in validas:
@@ -438,7 +449,7 @@ class Fantasma:
 
         # Naranja cerca de Pac-Man Error de antes: huia a la esquina mas lejana
         # en linea recta, y el pasillo hacia esa esquina a veces
-        # pasaba por Pac-Man. O sea que, huyendo, se le acercaba
+        # pasaba por Pac-Man O sea que, huyendo, se le acercaba
         # Cambio: de las salidas que hay, elige la que lo deja mas lejos
         # Como no puede dar media vuelta, no se queda subiendo y bajando
         if self.numero == 4 and self.jugador_esta_cerca(jugador):
@@ -491,12 +502,12 @@ class Fantasma:
 
     # Un fotograma del fantasma
     # Error de antes: elegia flecha varias veces mientras pasaba por el borde,
-    # y si el paso chocaba la elegia otra vez al instante. Por eso rebotaban
+    # y si el paso chocaba la elegia otra vez al instante Por eso rebotaban
     # Cambio: elige solo al caer en el centro, y esa flecha se mantiene
     # hasta el centro de la casilla que sigue
     def actualizar(self, celdas_libres, jugador, fantasmas, historial_jugador):
         # Mientras espera, no elige camino ni se mueve
-        # Resta 1 por vuelta. Cuando llega a 0, ahi recien empieza a perseguir
+        # Resta 1 por vuelta Cuando llega a 0, ahi recien empieza a perseguir
         if self.espera > 0:
             self.espera -= 1
             return
@@ -550,7 +561,7 @@ class Fantasma:
 # Molde de la partida entera: ventana, mapa, puntaje y el bucle
 class Juego:
     # Abre la ventana, le pone titulo, crea el reloj y dos letras
-    # [] es una lista vacia. Ahi se van metiendo muros, puntos y fantasmas
+    # [] es una lista vacia Ahi se van metiendo muros, puntos y fantasmas
     # proximo_umbral_fantasma = 100: el proximo fantasma aparece a los 100 puntos
     # Al final arma el mapa y deja la partida lista con reiniciar
     def __init__(self):
@@ -577,14 +588,14 @@ class Juego:
         self.reiniciar()
 
     # El mapa es una tabla de letras
-    # "." es pasillo (ahi va un punto). "#" es muro
+    # "." es pasillo (ahi va un punto) "#" es muro
     # Primero se llena todo con puntos
-    # La lista de adentro es una fila. La de afuera junta todas las filas
+    # La lista de adentro es una fila La de afuera junta todas las filas
     # El _ del for es una variable que no se va a usar: solo se quiere repetir la accion
     def crear_mapa(self):
         mapa = [["." for _ in range(MAP_WIDTH)] for _ in range(MAP_HEIGHT)]
 
-        # Pinta el borde. range(n) da 0, 1, 2, ... hasta n-1. El ultimo numero no entra
+        # Pinta el borde range(n) da 0, 1, 2, ... hasta n-1 El ultimo numero no entra
         for fila in range(MAP_HEIGHT):
             mapa[fila][0] = "#"
             mapa[fila][MAP_WIDTH - 1] = "#"
@@ -622,15 +633,15 @@ class Juego:
         for fila, columna in aperturas:
             mapa[fila][columna] = "."
 
-        # El centro queda despejado. Ahi nacen Pac-Man y el primer fantasma
-        # range(9, 13) es 9, 10, 11 y 12. El 13 no entra
+        # El centro queda despejado Ahi nacen Pac-Man y el primer fantasma
+        # range(9, 13) es 9, 10, 11 y 12 El 13 no entra
         for fila in range(9, 13):
             for columna in range(11, 17):
                 mapa[fila][columna] = "."
 
         # Recorre toda la tabla
         # Si es muro, guarda un rectangulo para los choques
-        # Si es pasillo, crea un Punto. append lo agrega al final de la lista
+        # Si es pasillo, crea un Punto append lo agrega al final de la lista
         for fila in range(MAP_HEIGHT):
             for columna in range(MAP_WIDTH):
                 x = columna * TILE_SIZE
@@ -661,7 +672,7 @@ class Juego:
 
     # Suma un fantasma, hasta 6
     # Si ya hay 6, return sale y no hace nada mas
-    # Prueba 6 lugares. Se queda con los que no caen encima de un muro
+    # Prueba 6 lugares Se queda con los que no caen encima de un muro
     # y elige uno al azar
     # len cuenta cuantos elementos tiene una lista
     # El numero del nuevo es la cantidad actual + 1,
@@ -692,7 +703,7 @@ class Juego:
     # Si Pac-Man esta bastante cerca (un poco mas de media casilla), se lo come:
     # lo apaga y suma 10
     # Cada 100 puntos aparece un fantasma nuevo, hasta 6
-    # Al final, all pregunta si todos los puntos estan apagados. Si si, se gana
+    # Al final, all pregunta si todos los puntos estan apagados Si si, se gana
     def recoger_puntos(self):
         for punto in self.puntos:
             if not punto.activo:
@@ -727,7 +738,7 @@ class Juego:
     def procesar_eventos(self):
         for evento in pygame.event.get():
             # Cerrar la ventana o Escape termina todo
-            # pygame.quit apaga el dibujo. sys.exit corta Python
+            # pygame.quit apaga el dibujo sys.exit corta Python
             if evento.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -743,7 +754,7 @@ class Juego:
                 if evento.key == pygame.K_r:
                     self.reiniciar()
                 continue
-            # Un diccionario guarda pares. La tecla izquierda vale (-1, 0), y asi
+            # Un diccionario guarda pares La tecla izquierda vale (-1, 0), y asi
             # in pregunta si esa tecla esta entre las flechas
             direcciones = {
                 pygame.K_LEFT: (-1, 0),
@@ -754,13 +765,13 @@ class Juego:
             if evento.key in direcciones:
                 self.jugador.establecer_direccion(direcciones[evento.key])
 
-    # La logica de un fotograma. Si ya se gano o se perdio, return y no se mueve nada
+    # La logica de un fotograma Si ya se gano o se perdio, return y no se mueve nada
     def actualizar(self):
         if self.game_over or self.juego_completado:
             return
         self.jugador.actualizar(self.muros)
         # Si Pac-Man cambio de casilla, se agrega al final del rastro
-        # [-12:] se queda solo con los ultimos 12. Si no, la lista crece para siempre
+        # [-12:] se queda solo con los ultimos 12 Si no, la lista crece para siempre
         # Ese rastro lo recorre el verde, en orden
         # Error de antes: la cuenta era round(x / 28) y a veces anotaba la casilla de al lado
         celda_jugador = celda_desde_pixel(self.jugador.x, self.jugador.y)
@@ -813,7 +824,7 @@ class Juego:
 
     # Mientras se esta jugando, las dos condiciones fallan y return sale al toque
     # Si se perdio o se gano, tapa la pantalla con negro medio transparente
-    # y escribe el mensaje. SRCALPHA deja que el negro sea transparente
+    # y escribe el mensaje SRCALPHA deja que el negro sea transparente
     def dibujar_mensaje_final(self):
         if not self.game_over and not self.juego_completado:
             return
@@ -875,7 +886,7 @@ class Juego:
 
 
 # __name__ vale "__main__" solo cuando se corre este archivo directo
-# (py pacman.py). Si otro archivo lo inportara, esta parte no corre
+# (py pacman.py) Si otro archivo lo inportara, esta parte no corre
 # pygame.init enciende pygame
 # Juego() dispara el __init__: crea la ventana, el mapa y la partida
 # ejecutar entra al while y se queda ahi
